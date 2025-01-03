@@ -1,0 +1,8 @@
+docker-compose.dev.yml
+.env
+
+.idea/
+.vscode/
+apollo.yaml
+/per_apollo
+logs

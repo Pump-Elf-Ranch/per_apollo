@@ -1,0 +1,19 @@
+master_db:
+  db_host: ""
+  db_port:
+  db_user: ""
+  db_password: ""
+  db_name: ""
+
+server:
+  host: 0.0.0.0
+  port: 8080
+
+rpcs:
+  - rpc_url: ''
+    chain_id: 200810 # 测试网
+    start_block: 3775422 # 开始区块
+    header_buffer_size: 20 # 区块缓冲大小
+    contracts:
+      - ""
+      - ""

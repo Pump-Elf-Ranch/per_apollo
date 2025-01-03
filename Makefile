@@ -5,7 +5,7 @@ LDFLAGSSTRING +=-X main.GitCommit=$(GITCOMMIT)
 LDFLAGSSTRING +=-X main.GitDate=$(GITDATE)
 LDFLAGS := -ldflags "$(LDFLAGSSTRING)"
 
-runes:
+build:
 	env GO111MODULE=on go build -v $(LDFLAGS) ./cmd/per_apollo
 
 clean:

@@ -14,7 +14,7 @@ COPY . /app/per
 
 WORKDIR /app/per
 
-RUN make
+RUN make build
 
 FROM alpine:3.18
 

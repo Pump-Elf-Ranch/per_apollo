@@ -177,3 +177,8 @@ func (bep *BitLayerEventProcessor) eventUnpack(event common2.ContractEvent) erro
 	}
 	return nil
 }
+
+func (bep *BitLayerEventProcessor) Close() error {
+	bep.resourceCancel()
+	return bep.tasks.Wait()
+}

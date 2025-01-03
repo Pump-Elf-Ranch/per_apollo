@@ -192,5 +192,6 @@ func (syncer *Synchronizer) processBatch(headers []types.Header) error {
 }
 
 func (syncer *Synchronizer) Close() error {
-	return nil
+	syncer.resourceCancel()
+	return syncer.tasks.Wait()
 }

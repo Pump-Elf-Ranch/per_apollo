@@ -201,10 +201,27 @@ func (e *PerApollo) initConfig(ctx context.Context, cfg *config.Config) error {
 }
 
 func (e *PerApollo) Stop(ctx context.Context) error {
+	var result error
+
+	for i := range e.chainIdList {
+		if e.Synchronizer[e.chainIdList[i]] != nil {
+			if err := e.Synchronizer[e.chainIdList[i]].Close(); err != nil {
+				result = errors.Join(result, fmt.Errorf("failed to close L2 Synchronizer: %w", err))
+			}
+		}
+		if e.ethClient[e.chainIdList[i]] != nil {
+			e.ethClient[e.chainIdList[i]].Close()
+		}
+		if e.bitLayerEventProcessor != nil {
+			e.bitLayerEventProcessor.Close()
+		}
+	}
+
+	log.Info("apollo stopped")
+	e.stopped.Store(true)
 	return nil
 }
 
 func (e *PerApollo) Stopped() bool {
-	//TODO implement me
-	panic("implement me")
+	return e.stopped.Load()
 }

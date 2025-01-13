@@ -60,7 +60,7 @@ CREATE TABLE IF NOT EXISTS block_listener
 );
 
 
-CREATE TABLE IF NOT EXISTS runes_order
+CREATE TABLE IF NOT EXISTS mint_nft_listed
 (
     guid                    text PRIMARY KEY DEFAULT replace(uuid_generate_v4()::text, '-', ''),
     ticker                  VARCHAR,
@@ -87,7 +87,7 @@ CREATE INDEX IF NOT EXISTS runes_order_seller ON runes_order (seller);
 CREATE INDEX IF NOT EXISTS runes_order_buyer ON runes_order (buyer);
 CREATE INDEX IF NOT EXISTS runes_order_order_id ON runes_order (order_id);
 
-CREATE TABLE IF NOT EXISTS runes_listed
+CREATE TABLE IF NOT EXISTS prop_buy_listed
 (
     guid                    text PRIMARY KEY DEFAULT replace(uuid_generate_v4()::text, '-', ''),
     ticker                  VARCHAR,
@@ -114,28 +114,3 @@ CREATE INDEX IF NOT EXISTS runes_listed_update_time ON runes_listed (update_time
 
 CREATE INDEX IF NOT EXISTS runes_listed_order_id ON runes_listed (order_id);
 
-CREATE TABLE IF NOT EXISTS runes_activity
-(
-    guid                    text PRIMARY KEY DEFAULT replace(uuid_generate_v4()::text, '-', ''),
-    ticker                  VARCHAR,
-    symbol                  VARCHAR,
-    token_address           VARCHAR,
-    token_decimal           int8,
-    amount                  VARCHAR,
-    price                   VARCHAR,
-    total                   VARCHAR,
-    seller                  varchar,
-    buyer                   varchar,
-    order_id                UINT256,
-    activity_type           int2,
-    timestamp               UINT256,
-    market_contract_address varchar,
-    block_number            UINT256,
-    tx_hash                 varchar
-);
-
-CREATE INDEX IF NOT EXISTS runes_activity_tx_hash ON runes_activity (tx_hash);
-CREATE INDEX IF NOT EXISTS runes_activity_seller ON runes_activity (seller);
-CREATE INDEX IF NOT EXISTS runes_activity_buyer ON runes_activity (buyer);
-CREATE INDEX IF NOT EXISTS runes_activity_timestamp ON runes_activity (timestamp);
-CREATE INDEX IF NOT EXISTS runes_activity_order_id ON runes_activity (order_id);

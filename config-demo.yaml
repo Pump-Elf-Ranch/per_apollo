@@ -11,7 +11,7 @@ server:
 
 rpcs:
   - rpc_url: ''
-    chain_id: 200810 # 测试网
+    chain_id: 11155111 # 测试网
     start_block: 3775422 # 开始区块
     header_buffer_size: 20 # 区块缓冲大小
     contracts:

@@ -140,9 +140,8 @@ func (e *PerApollo) newApi(cfg *config.Config) error {
 		})
 	})
 
-	business_api.RunesOrderApi(r)
-	business_api.RunesListedApi(r)
-	business_api.RunesActivityApi(r)
+	business_api.BuyPropApi(r)
+	business_api.MintListedApi(r)
 
 	port := fmt.Sprintf(":%d", cfg.Server.Port)
 	err := r.Run(port)

@@ -62,48 +62,38 @@ CREATE TABLE IF NOT EXISTS block_listener
 
 CREATE TABLE IF NOT EXISTS mint_nft_listed
 (
-    guid                    text PRIMARY KEY DEFAULT replace(uuid_generate_v4()::text, '-', ''),
-    status                  int2,
-    amount                  VARCHAR,
-    mint_price varchar,
-    mint_address            varchar,
-    timestamp               UINT256,
+    guid             text PRIMARY KEY DEFAULT replace(uuid_generate_v4()::text, '-', ''),
+    status           int2,
+    mint_address     varchar,
+    timestamp        UINT256,
+    nonce            UINT256,
     contract_address varchar,
-    order_type              int2,
-    block_number            UINT256,
-    tx_hash                 varchar,
-    order_tx_hash           varchar
+    mint_type        int2,
+    block_number     UINT256,
+    tx_hash          varchar
 );
-CREATE INDEX IF NOT EXISTS runes_order_order_tx_hash ON runes_order (order_tx_hash);
-CREATE INDEX IF NOT EXISTS runes_order_tx_hash ON runes_order (tx_hash);
-CREATE INDEX IF NOT EXISTS runes_order_seller ON runes_order (seller);
-CREATE INDEX IF NOT EXISTS runes_order_buyer ON runes_order (buyer);
-CREATE INDEX IF NOT EXISTS runes_order_order_id ON runes_order (order_id);
+CREATE INDEX IF NOT EXISTS mint_nft_listed_tx_hash ON mint_nft_listed (tx_hash);
+CREATE INDEX IF NOT EXISTS mint_nft_listed_mint_address ON mint_nft_listed (mint_address);
+CREATE INDEX IF NOT EXISTS mint_nft_listed_contract_address ON mint_nft_listed (contract_address);
+CREATE INDEX IF NOT EXISTS mint_nft_listed_mint_type ON mint_nft_listed (mint_type);
 
 CREATE TABLE IF NOT EXISTS prop_buy_listed
 (
-    guid                    text PRIMARY KEY DEFAULT replace(uuid_generate_v4()::text, '-', ''),
-    ticker                  VARCHAR,
-    symbol                  VARCHAR,
-    token_address           VARCHAR,
-    token_decimal           int8,
-    amount                  VARCHAR,
-    price                   VARCHAR,
-    total                   VARCHAR,
-    seller                  varchar,
-    order_id                UINT256,
-    status                  int2,
-    create_time             UINT256,
-    update_time             UINT256,
-    market_contract_address varchar,
-    block_number            UINT256,
-    tx_hash                 varchar
+    guid             text PRIMARY KEY DEFAULT replace(uuid_generate_v4()::text, '-', ''),
+    buyer            varchar,
+    item_id          UINT256,
+    timestamp        UINT256,
+    price            UINT256,
+    item_type        varchar,
+    contract_address varchar,
+    block_number     UINT256,
+    is_deposit       int2,
+    tx_hash          varchar
 );
 
-CREATE INDEX IF NOT EXISTS runes_listed_tx_hash ON runes_listed (tx_hash);
-CREATE INDEX IF NOT EXISTS runes_listed_seller ON runes_listed (seller);
-CREATE INDEX IF NOT EXISTS runes_listed_create_time ON runes_listed (create_time);
-CREATE INDEX IF NOT EXISTS runes_listed_update_time ON runes_listed (update_time);
-
-CREATE INDEX IF NOT EXISTS runes_listed_order_id ON runes_listed (order_id);
+CREATE INDEX IF NOT EXISTS prop_buy_listed_tx_hash ON prop_buy_listed (tx_hash);
+CREATE INDEX IF NOT EXISTS prop_buy_listed_buyer ON prop_buy_listed (buyer);
+CREATE INDEX IF NOT EXISTS prop_buy_listed_contract_address ON prop_buy_listed (contract_address);
+CREATE INDEX IF NOT EXISTS prop_buy_listed_item_type ON prop_buy_listed (item_type);
+CREATE INDEX IF NOT EXISTS prop_buy_listed_item_id ON prop_buy_listed (item_id);
 

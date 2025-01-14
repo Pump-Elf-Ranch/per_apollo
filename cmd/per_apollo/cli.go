@@ -2,10 +2,10 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"strconv"
 
 	"github.com/ethereum/go-ethereum/log"
-	"github.com/ethereum/go-ethereum/params"
 	"github.com/urfave/cli/v2"
 
 	PerSynchronizer "github.com/Pump-Elf-Ranch/per_apollo"
@@ -22,13 +22,13 @@ var (
 		Value:   "./apollo.yaml",
 		Aliases: []string{"c"},
 		Usage:   "path to config file",
-		EnvVars: []string{"APOLOLO_CONFIG"},
+		EnvVars: []string{"APOLLO_CONFIG"},
 	}
 	MigrationsFlag = &cli.StringFlag{
 		Name:    "migrations-dir",
 		Value:   "./migrations",
 		Usage:   "path to migrations folder",
-		EnvVars: []string{"RUNES_MIGRATIONS_DIR"},
+		EnvVars: []string{"APOLLO_MIGRATIONS_DIR"},
 	}
 )
 
@@ -71,6 +71,9 @@ func runMigrations(ctx *cli.Context) error {
 			return
 		}
 	}(db)
+
+	// Create migrations table if it doesn't exist
+	db.CreateTable.InitMigration()
 	err = db.ExecuteSQLMigration(ctx.String(MigrationsFlag.Name))
 	if err != nil {
 		return err
@@ -86,8 +89,11 @@ func runMigrations(ctx *cli.Context) error {
 func newCli(GitCommit string, GitDate string) *cli.App {
 	flags := []cli.Flag{ConfigFlag}
 	migrationFlags := []cli.Flag{MigrationsFlag, ConfigFlag}
+	version := GitDate
+	commitHash := GitCommit
+	fullVersion := fmt.Sprintf("%s-%s", version, commitHash)
 	return &cli.App{
-		Version:              params.VersionWithCommit(GitCommit, GitDate),
+		Version:              fullVersion,
 		Description:          "An indexer of all optimism events with a serving api layer",
 		EnableBashCompletion: true,
 		Commands: []*cli.Command{

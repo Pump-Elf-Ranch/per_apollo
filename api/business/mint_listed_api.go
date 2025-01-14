@@ -3,17 +3,17 @@ package business
 import (
 	"github.com/Pump-Elf-Ranch/per_apollo/common/api_result"
 	"github.com/Pump-Elf-Ranch/per_apollo/common/bigint"
+	"github.com/Pump-Elf-Ranch/per_apollo/common/enum"
 	"github.com/Pump-Elf-Ranch/per_apollo/service"
 	"github.com/gin-gonic/gin"
-	"strings"
 )
 
-func RunesActivityApi(rg *gin.Engine) {
-	r := rg.Group("/v1/activity")
-	r.GET("list", runesActivityList)
+func MintListedApi(rg *gin.Engine) {
+	r := rg.Group("/v1/mint")
+	r.GET("list", mint_list)
 }
 
-func runesActivityList(c *gin.Context) {
+func mint_list(c *gin.Context) {
 	pageSizeStr := c.Query("pageSize")
 	pageNumStr := c.Query("pageNum")
 	if pageSizeStr == "" || pageNumStr == "" {
@@ -22,15 +22,14 @@ func runesActivityList(c *gin.Context) {
 	}
 	pageSize := bigint.StringToInt(pageSizeStr)
 	pageNum := bigint.StringToInt(pageNumStr)
-	activityTypeStr := c.Query("activityType")
-	var activityType []int
-	if activityTypeStr != "" {
-		activityTypeArr := strings.Split(activityTypeStr, ",")
-		for _, v := range activityTypeArr {
-			activityType = append(activityType, bigint.StringToInt(v))
-		}
+
+	userAddress := c.Query("userAddress")
+	if userAddress == "" {
+		api_result.NewApiResult(c).Error(enum.ParamErr.Code, enum.ParamErr.Msg)
+		return
 	}
-	infos, count := service.BaseService.RunesActivityService.RunesActivityList(activityType, pageNum, pageSize)
+
+	infos, count := service.BaseService.MintListedService.MintListedList(userAddress, pageNum, pageSize)
 	page := api_result.NewPage(infos, int(count), pageNum, pageSize)
 	api_result.NewApiResult(c).Success(page)
 }

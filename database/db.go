@@ -26,9 +26,8 @@ type DB struct {
 	Blocks         common.BlocksDB
 	ContractEvents common.ContractEventsDB
 	CreateTable    common.CreateTableDB
-	RunesActivity  business.RunesActivityDB
-	RunesListed    business.RunesListedDB
-	RunesOrder     business.RunesOrderDB
+	MintListed     business.MintListedDB
+	BuyPropListed  business.BuyPropListedDB
 	BlockListener  block_listener.BlockListenerDB
 }
 
@@ -66,9 +65,8 @@ func NewDB(dbConfig config.Database) (*DB, error) {
 		Blocks:         common.NewBlocksDB(gorm),
 		ContractEvents: common.NewContractEventsDB(gorm),
 		CreateTable:    common.NewCreateTableDB(gorm),
-		RunesActivity:  business.NewRunesActivityDB(gorm),
-		RunesListed:    business.NewRunesListedDB(gorm),
-		RunesOrder:     business.NewRunesOrderDB(gorm),
+		MintListed:     business.NewMintListedDB(gorm),
+		BuyPropListed:  business.NewBuyPropListedDB(gorm),
 		BlockListener:  block_listener.NewBlockListenerDB(gorm),
 	}
 	return db, nil
@@ -81,9 +79,8 @@ func (db *DB) Transaction(fn func(db *DB) error) error {
 			Blocks:         common.NewBlocksDB(gorm),
 			ContractEvents: common.NewContractEventsDB(gorm),
 			CreateTable:    common.NewCreateTableDB(gorm),
-			RunesActivity:  business.NewRunesActivityDB(gorm),
-			RunesListed:    business.NewRunesListedDB(gorm),
-			RunesOrder:     business.NewRunesOrderDB(gorm),
+			MintListed:     business.NewMintListedDB(gorm),
+			BuyPropListed:  business.NewBuyPropListedDB(gorm),
 			BlockListener:  block_listener.NewBlockListenerDB(gorm),
 		}
 		return fn(txDB)
@@ -110,9 +107,27 @@ func (db *DB) ExecuteSQLMigration(migrationsFolder string) error {
 		if readErr != nil {
 			return errors.Wrap(readErr, fmt.Sprintf("Error reading SQL file: %s", path))
 		}
+		// Check if migrations have already been run
+		var migrationCount int
+		err = db.gorm.Raw("SELECT COUNT(*) FROM migrations WHERE version = ?", path).Scan(&migrationCount).Error
+		if err != nil {
+			log.Error("failed to check migration status", "err", err)
+			return err
+		}
+		if migrationCount > 0 {
+			log.Info("migrations already run, skipping")
+			return nil
+		}
 		execErr := db.gorm.Exec(string(fileContent)).Error
 		if execErr != nil {
 			return errors.Wrap(execErr, fmt.Sprintf("Error executing SQL script: %s", path))
+		}
+
+		// Record the migration as completed
+		err = db.gorm.Exec("INSERT INTO migrations (version) VALUES (?)", path).Error
+		if err != nil {
+			log.Error("failed to record migration", "err", err)
+			return err
 		}
 		return nil
 	})

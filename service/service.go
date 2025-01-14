@@ -8,22 +8,20 @@ import (
 )
 
 type service struct {
-	Db                   *database.DB
-	Cfg                  *config.Config
-	RunesActivityService businessService.RunesActivityService
-	RunesListedService   businessService.RunesListedService
-	RunesOrderService    businessService.RunesOrderService
+	Db                *database.DB
+	Cfg               *config.Config
+	BuyPropService    businessService.BuyPropService
+	MintListedService businessService.MintListedService
 }
 
 var BaseService *service
 
 func NewBaseService(db *database.DB, cfg *config.Config) {
 	BaseService = &service{
-		Db:                   db,
-		Cfg:                  cfg,
-		RunesActivityService: businessService.NewRunesActivityService(db),
-		RunesListedService:   businessService.NewRunesListedService(db),
-		RunesOrderService:    businessService.NewRunesOrderService(db),
+		Db:                db,
+		Cfg:               cfg,
+		BuyPropService:    businessService.NewBuyPropService(db),
+		MintListedService: businessService.NewMintListedService(db),
 	}
 	log.Info("init BaseService success🏅️")
 }

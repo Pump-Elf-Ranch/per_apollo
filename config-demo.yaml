@@ -1,6 +1,6 @@
 master_db:
   db_host: ""
-  db_port:
+  db_port: 5432
   db_user: ""
   db_password: ""
   db_name: ""

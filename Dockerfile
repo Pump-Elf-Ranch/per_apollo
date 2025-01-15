@@ -19,7 +19,7 @@ RUN make build
 FROM alpine:3.18
 
 COPY --from=builder /app/per/per_apollo /usr/local/bin
-COPY --from=builder /app/per/apollo_test.yaml /app/per/apollo.yaml
+COPY --from=builder /app/per/config-demo.yaml /app/per/apollo.yaml
 COPY --from=builder /app/per/migrations /app/per/migrations
 
 ENV INDEXER_MIGRATIONS_DIR="/app/per/migrations"

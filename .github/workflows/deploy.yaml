@@ -38,7 +38,7 @@ jobs:
           docker push ${IMAGE_URL}
       - name: Update Deploy Version
         run: |
-          sed -i 's/{{IMAGE_VERSION}}/${{ steps.get-commit-sha.outputs.sha }}/g' mainfest.yaml
+          sed -i 's/{{IMAGE_VERSION}}/${COMMIT_SHA}/g' mainfest.yaml
 
       - name: Deploy to k3s
         uses: steebchen/kubectl@master

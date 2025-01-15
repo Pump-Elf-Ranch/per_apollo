@@ -1,8 +1,8 @@
 master_db:
-  db_host: "127.0.0.1"
+  db_host: "pgsql"
   db_port: 5432
   db_user: "postgres"
-  db_password: "123456"
+  db_password: "{{PGSQL_PASSWORD}}"
   db_name: "pumpelf"
 
 server:
@@ -10,10 +10,10 @@ server:
   port: 8080
 
 rpcs:
-  - rpc_url: ''
+  - rpc_url: '{{RPC_URL}}'
     chain_id: 11155111 # 测试网
-    start_block: 3775422 # 开始区块
-    header_buffer_size: 20 # 区块缓冲大小
+    start_block: 7345203
+    event_start_block: 7345203
+    header_buffer_size: 200 # 区块缓冲大小
     contracts:
-      - ""
-      - ""
+      - "0x99d2f8e0d9267c22fbecedbc505f2c2f1bba3517"

@@ -12,12 +12,11 @@ import (
 
 type MintListed struct {
 	GUID            uuid.UUID      `gorm:"primaryKey;DEFAULT:replace(uuid_generate_v4()::text,'-','');serializer:uuid" json:"guid"`
-	Status          int            `json:"status"`
 	MintAddress     common.Address `gorm:"serializer:bytes" json:"mintAddress"`
-	Timestamp       *big.Int       `gorm:"serializer:u256" json:"timestamp"`
+	Timestamp       uint64         ` json:"timestamp"`
 	Nonce           *big.Int       `gorm:"serializer:u256" json:"nonce"`
 	ContractAddress common.Address `gorm:"serializer:bytes" json:"contractAddress"`
-	MintType        int            `json:"mintType"`
+	MintType        string         `json:"mintType"`
 	BlockNumber     *big.Int       `gorm:"serializer:u256" json:"blockNumber"`
 	TxHash          common.Hash    `gorm:"serializer:bytes" json:"txHash"`
 }

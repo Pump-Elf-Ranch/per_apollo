@@ -14,10 +14,10 @@ type BuyPropListed struct {
 	GUID            uuid.UUID      `gorm:"primaryKey;DEFAULT:replace(uuid_generate_v4()::text,'-','');serializer:uuid" json:"guid"`
 	Buyer           common.Address `gorm:"serializer:bytes" json:"buyer"`
 	ItemId          *big.Int       `gorm:"serializer:u256" json:"itemId"`
-	Timestamp       *big.Int       `gorm:"serializer:u256" json:"timestamp"`
+	Timestamp       uint64         ` json:"timestamp"`
 	Price           *big.Int       `gorm:"serializer:u256" json:"price"`
 	ItemType        string         `json:"itemType"`
-	IsDeposit       int            `json:"is_deposit"`
+	IsDeposit       int            `json:"isDeposit"`
 	ContractAddress common.Address `gorm:"serializer:bytes" json:"contractAddress"`
 	BlockNumber     *big.Int       `gorm:"serializer:u256" json:"blockNumber"`
 	TxHash          common.Hash    `gorm:"serializer:bytes" json:"txHash"`

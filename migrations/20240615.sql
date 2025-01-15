@@ -63,12 +63,11 @@ CREATE TABLE IF NOT EXISTS block_listener
 CREATE TABLE IF NOT EXISTS mint_nft_listed
 (
     guid             text PRIMARY KEY DEFAULT replace(uuid_generate_v4()::text, '-', ''),
-    status           int2,
     mint_address     varchar,
     timestamp        UINT256,
     nonce            UINT256,
     contract_address varchar,
-    mint_type        int2,
+    mint_type        varchar,
     block_number     UINT256,
     tx_hash          varchar
 );

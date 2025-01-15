@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/Pump-Elf-Ranch/per_apollo/event/sepolia"
 	"math/big"
 	"sync/atomic"
 	"time"
@@ -17,20 +18,19 @@ import (
 	"github.com/Pump-Elf-Ranch/per_apollo/common/middleware"
 	"github.com/Pump-Elf-Ranch/per_apollo/config"
 	"github.com/Pump-Elf-Ranch/per_apollo/database"
-	"github.com/Pump-Elf-Ranch/per_apollo/event/bitlayer"
 	"github.com/Pump-Elf-Ranch/per_apollo/service"
 	"github.com/Pump-Elf-Ranch/per_apollo/synchronizer"
 	"github.com/Pump-Elf-Ranch/per_apollo/synchronizer/node"
 )
 
 type PerApollo struct {
-	shutdown               context.CancelCauseFunc
-	db                     *database.DB
-	Synchronizer           map[uint64]*synchronizer.Synchronizer
-	stopped                atomic.Bool
-	chainIdList            []uint64
-	ethClient              map[uint64]node.EthClient
-	bitLayerEventProcessor *bitlayer.BitLayerEventProcessor
+	shutdown              context.CancelCauseFunc
+	db                    *database.DB
+	Synchronizer          map[uint64]*synchronizer.Synchronizer
+	stopped               atomic.Bool
+	chainIdList           []uint64
+	ethClient             map[uint64]node.EthClient
+	sepoliaEventProcessor *sepolia.SepoliaEventProcessor
 }
 
 func NewApi(ctx context.Context, cfg *config.Config, shutdown context.CancelCauseFunc) (*PerApollo, error) {
@@ -60,17 +60,17 @@ func (e *PerApollo) initEvent(ctx context.Context, cfg *config.Config) error {
 		rpc := cfg.RPCs[i]
 		chainId := rpc.ChainId
 		chainIdStr := fmt.Sprintf("%d", chainId)
-		log.Info("Init bitlayer event processor", "chainId", chainId)
-		if chainId == global_const.BitLayerTestNetChainId || chainId == global_const.BitLayerMainNetChainId {
+		log.Info("Init event processor", "chainId", chainId)
+		if chainId == global_const.SepoliaTestNetChainId {
 			var epoch uint64 = 10_000
 			var loopInterval time.Duration = time.Second * 5
-			bitLayerEventProcessor, err := bitlayer.NewEventProcessor(e.db,
+			sepoliaEventProcessor, err := sepolia.NewEventProcessor(e.db,
 				loopInterval,
 				rpc.Contracts, chainIdStr, rpc.StartBlock, rpc.EventStartBlock, epoch, e.shutdown, rpc.RpcUrl)
 			if err != nil {
-				return fmt.Errorf("failed to init bitlayer event processor: %w", err)
+				return fmt.Errorf("failed to init sepolia event processor: %w", err)
 			}
-			e.bitLayerEventProcessor = bitLayerEventProcessor
+			e.sepoliaEventProcessor = sepoliaEventProcessor
 		}
 	}
 	return nil
@@ -106,7 +106,7 @@ func (e *PerApollo) initDB(cfg *config.Config) error {
 }
 
 func NewSync(ctx context.Context, cfg *config.Config, shutdown context.CancelCauseFunc) (*PerApollo, error) {
-	log.Info("NewSync start️ 🕖")
+	log.Info("NewSync start 🕖")
 	out := &PerApollo{
 		shutdown: shutdown,
 	}
@@ -116,13 +116,14 @@ func NewSync(ctx context.Context, cfg *config.Config, shutdown context.CancelCau
 	if err := out.initRPCClients(ctx, cfg); err != nil {
 		return nil, errors.Join(err, out.Stop(ctx))
 	}
-	//if err := out.initEvent(ctx, cfg); err != nil {
-	//	return nil, errors.Join(err, out.Stop(ctx))
-	//}
+	if err := out.initEvent(ctx, cfg); err != nil {
+		return nil, errors.Join(err, out.Stop(ctx))
+	}
+	// todo add worker
 	if err := out.newSync(cfg); err != nil {
 		return nil, errors.Join(err, out.Stop(ctx))
 	}
-	log.Info("NewSync success🏅️")
+	log.Info("NewSync success 🏅️")
 	return out, nil
 }
 
@@ -182,10 +183,10 @@ func (e *PerApollo) Start(ctx context.Context) error {
 			return fmt.Errorf("failed to start L1 Sync: %w", err)
 		}
 	}
-	//err := e.bitLayerEventProcessor.Start()
-	//if err != nil {
-	//	return fmt.Errorf("failed to start bitlayer event processor: %w", err)
-	//}
+	err := e.sepoliaEventProcessor.Start()
+	if err != nil {
+		return fmt.Errorf("failed to start sepolia event processor: %w", err)
+	}
 	return nil
 }
 
@@ -211,8 +212,11 @@ func (e *PerApollo) Stop(ctx context.Context) error {
 		if e.ethClient[e.chainIdList[i]] != nil {
 			e.ethClient[e.chainIdList[i]].Close()
 		}
-		if e.bitLayerEventProcessor != nil {
-			e.bitLayerEventProcessor.Close()
+		if e.sepoliaEventProcessor != nil {
+			err := e.sepoliaEventProcessor.Close()
+			if err != nil {
+				result = errors.Join(result, fmt.Errorf("failed to close sepolia event processor: %w", err))
+			}
 		}
 	}
 

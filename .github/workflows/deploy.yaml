@@ -32,8 +32,8 @@ jobs:
         run: |
           IMAGE_URL="registry.ap-northeast-1.aliyuncs.com/omni-new/per_apollo:${COMMIT_SHA}"
           echo $IMAGE_URL
-          sed -i 's/{{PGSQL_PASSWORD}}/${{ secrets.PGSQL_PASSWORD }}/g' config-demo.yaml
-          sed -i 's/{{RPC_URL}}/${{ secrets.RPC_URL }}/g' config-demo.yaml
+          sed -i 's|{{PGSQL_PASSWORD}}|'"${{ secrets.PGSQL_PASSWORD }}"'|g' config-demo.yaml
+          sed -i 's|{{RPC_URL}}|'"${{ secrets.RPC_URL }}"'|g' config-demo.yaml
           docker build -t ${IMAGE_URL} .
           docker push ${IMAGE_URL}
       - name: Update Deploy Version

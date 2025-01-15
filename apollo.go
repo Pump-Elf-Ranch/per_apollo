@@ -116,9 +116,9 @@ func NewSync(ctx context.Context, cfg *config.Config, shutdown context.CancelCau
 	if err := out.initRPCClients(ctx, cfg); err != nil {
 		return nil, errors.Join(err, out.Stop(ctx))
 	}
-	if err := out.initEvent(ctx, cfg); err != nil {
-		return nil, errors.Join(err, out.Stop(ctx))
-	}
+	//if err := out.initEvent(ctx, cfg); err != nil {
+	//	return nil, errors.Join(err, out.Stop(ctx))
+	//}
 	if err := out.newSync(cfg); err != nil {
 		return nil, errors.Join(err, out.Stop(ctx))
 	}
@@ -182,10 +182,10 @@ func (e *PerApollo) Start(ctx context.Context) error {
 			return fmt.Errorf("failed to start L1 Sync: %w", err)
 		}
 	}
-	err := e.bitLayerEventProcessor.Start()
-	if err != nil {
-		return fmt.Errorf("failed to start bitlayer event processor: %w", err)
-	}
+	//err := e.bitLayerEventProcessor.Start()
+	//if err != nil {
+	//	return fmt.Errorf("failed to start bitlayer event processor: %w", err)
+	//}
 	return nil
 }
 

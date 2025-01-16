@@ -17,3 +17,7 @@ rpcs:
     header_buffer_size: 200 # 区块缓冲大小
     contracts:
       - "0x99d2f8e0d9267c22fbecedbc505f2c2f1bba3517"
+
+contract_infos:
+  - chain_id: 11155111
+    token_base_address: "0x99d2f8e0d9267c22fbecedbc505f2c2f1bba3517"

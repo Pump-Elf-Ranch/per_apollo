@@ -20,12 +20,13 @@ type Database struct {
 }
 
 type Config struct {
-	Server         Server   `yaml:"server"`
-	MasterDb       Database `yaml:"master_db"`
-	SlaveDb        Database `yaml:"slave_db"`
-	SlaveDbEnable  bool     `yaml:"slave_db_enable"`
-	EnableApiCache bool     `yaml:"enable_api_cache"`
-	RPCs           []*RPC   `yaml:"rpcs"`
+	Server         Server          `yaml:"server"`
+	MasterDb       Database        `yaml:"master_db"`
+	SlaveDb        Database        `yaml:"slave_db"`
+	SlaveDbEnable  bool            `yaml:"slave_db_enable"`
+	EnableApiCache bool            `yaml:"enable_api_cache"`
+	RPCs           []*RPC          `yaml:"rpcs"`
+	ContractInfos  []*ContractInfo `yaml:"contract_infos"`
 }
 
 type RPC struct {
@@ -35,6 +36,11 @@ type RPC struct {
 	StartBlock       uint64   `yaml:"start_block"`
 	EventStartBlock  uint64   `yaml:"event_start_block"`
 	Contracts        []string `yaml:"contracts"`
+}
+
+type ContractInfo struct {
+	ChainId          uint64 `yaml:"chain_id" json:"chainId"`
+	TokenBaseAddress string `yaml:"token_base_address" json:"tokenBaseAddress"`
 }
 
 func New(path string) (*Config, error) {

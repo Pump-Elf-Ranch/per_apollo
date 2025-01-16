@@ -143,6 +143,7 @@ func (e *PerApollo) newApi(cfg *config.Config) error {
 
 	business_api.BuyPropApi(r)
 	business_api.MintListedApi(r)
+	business_api.ContractInfoApi(r)
 
 	port := fmt.Sprintf(":%d", cfg.Server.Port)
 	err := r.Run(port)

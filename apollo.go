@@ -5,6 +5,8 @@ import (
 	"errors"
 	"fmt"
 	"github.com/Pump-Elf-Ranch/per_apollo/event/sepolia"
+	"github.com/Pump-Elf-Ranch/per_apollo/worker/clean_data_worker"
+	"github.com/Pump-Elf-Ranch/per_apollo/worker/deposit_prop_worker"
 	"math/big"
 	"sync/atomic"
 	"time"
@@ -24,13 +26,15 @@ import (
 )
 
 type PerApollo struct {
-	shutdown              context.CancelCauseFunc
-	db                    *database.DB
-	Synchronizer          map[uint64]*synchronizer.Synchronizer
-	stopped               atomic.Bool
-	chainIdList           []uint64
-	ethClient             map[uint64]node.EthClient
-	sepoliaEventProcessor *sepolia.SepoliaEventProcessor
+	shutdown                context.CancelCauseFunc
+	db                      *database.DB
+	Synchronizer            map[uint64]*synchronizer.Synchronizer
+	stopped                 atomic.Bool
+	chainIdList             []uint64
+	ethClient               map[uint64]node.EthClient
+	sepoliaEventProcessor   *sepolia.SepoliaEventProcessor
+	cleanBlockHerdersWorker *clean_data_worker.WorkerProcessor
+	depositPropWorker       *deposit_prop_worker.WorkerProcessor
 }
 
 func NewApi(ctx context.Context, cfg *config.Config, shutdown context.CancelCauseFunc) (*PerApollo, error) {
@@ -119,12 +123,37 @@ func NewSync(ctx context.Context, cfg *config.Config, shutdown context.CancelCau
 	if err := out.initEvent(ctx, cfg); err != nil {
 		return nil, errors.Join(err, out.Stop(ctx))
 	}
-	// todo add worker
+	if err := out.initCleanBlockWorker(cfg); err != nil {
+		return nil, errors.Join(err, out.Stop(ctx))
+	}
+	if err := out.initDepositWorker(cfg); err != nil {
+		return nil, errors.Join(err, out.Stop(ctx))
+	}
 	if err := out.newSync(cfg); err != nil {
 		return nil, errors.Join(err, out.Stop(ctx))
 	}
 	log.Info("NewSync success 🏅️")
 	return out, nil
+}
+
+func (e *PerApollo) initCleanBlockWorker(cfg *config.Config) error {
+	cleanDataWorker, err := clean_data_worker.NewWorkerProcessor(e.db, e.shutdown, cfg)
+	if err != nil {
+		return fmt.Errorf("failed to init  to clean_data_woker: %w", err)
+	}
+	e.cleanBlockHerdersWorker = cleanDataWorker
+	log.Info("Init clean_data_woker success")
+	return nil
+}
+
+func (e *PerApollo) initDepositWorker(cfg *config.Config) error {
+	depositPropWorker, err := deposit_prop_worker.NewWorkerProcessor(e.db, e.shutdown, cfg)
+	if err != nil {
+		return fmt.Errorf("failed to init  to depositPropWorker: %w", err)
+	}
+	e.depositPropWorker = depositPropWorker
+	log.Info("Init depositPropWorker success")
+	return nil
 }
 
 func (e *PerApollo) newApi(cfg *config.Config) error {
@@ -187,6 +216,14 @@ func (e *PerApollo) Start(ctx context.Context) error {
 	err := e.sepoliaEventProcessor.Start()
 	if err != nil {
 		return fmt.Errorf("failed to start sepolia event processor: %w", err)
+	}
+	err = e.cleanBlockHerdersWorker.WorkerStart()
+	if err != nil {
+		return fmt.Errorf("failed to start clean block herders worker: %w", err)
+	}
+	err = e.depositPropWorker.WorkerStart()
+	if err != nil {
+		return fmt.Errorf("failed to start deposit prop worker: %w", err)
 	}
 	return nil
 }

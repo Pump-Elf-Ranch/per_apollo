@@ -16,6 +16,9 @@ type BuyPropListed struct {
 	ItemId          *big.Int       `gorm:"serializer:u256" json:"itemId"`
 	Timestamp       uint64         ` json:"timestamp"`
 	Price           *big.Int       `gorm:"serializer:u256" json:"price"`
+	Pid1            *big.Int       `gorm:"serializer:u256" json:"pid1"`
+	Pid2            *big.Int       `gorm:"serializer:u256" json:"pid2"`
+	RanchId         *big.Int       `gorm:"serializer:u256" json:"ranchId"`
 	ItemType        string         `json:"itemType"`
 	IsDeposit       int            `json:"isDeposit"`
 	ContractAddress common.Address `gorm:"serializer:bytes" json:"contractAddress"`

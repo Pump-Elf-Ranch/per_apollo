@@ -26,6 +26,8 @@ type Config struct {
 	SlaveDbEnable  bool            `yaml:"slave_db_enable"`
 	EnableApiCache bool            `yaml:"enable_api_cache"`
 	RPCs           []*RPC          `yaml:"rpcs"`
+	AdminKey       string          `yaml:"admin_key"`
+	ZkwasmRpcUrl   string          `yaml:"zkwasm_rpc_url"`
 	ContractInfos  []*ContractInfo `yaml:"contract_infos"`
 }
 

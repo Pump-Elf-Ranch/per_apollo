@@ -86,7 +86,7 @@ CREATE TABLE IF NOT EXISTS prop_buy_listed
     item_type        varchar,
     contract_address varchar,
     block_number     UINT256,
-    is_deposit       int2,
+    is_deposit       int2 DEFAULT 0,
     tx_hash          varchar
 );
 

@@ -5,7 +5,6 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/ethereum/go-ethereum/log"
 
-	"github.com/Pump-Elf-Ranch/per_apollo/common/global_const"
 	"github.com/Pump-Elf-Ranch/per_apollo/database"
 	"github.com/Pump-Elf-Ranch/per_apollo/database/business"
 	common2 "github.com/Pump-Elf-Ranch/per_apollo/database/common"
@@ -57,7 +56,6 @@ func ItemBought(event common2.ContractEvent, db *database.DB, ethClient *ethclie
 		Pid1:            uEvent.Pid1,
 		Pid2:            uEvent.Pid2,
 		RanchId:         uEvent.RanchId,
-		IsDeposit:       global_const.NoDeposit,
 		ContractAddress: event.ContractAddress,
 		BlockNumber:     event.BlockNumber,
 		TxHash:          rlpLog.TxHash,

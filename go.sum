@@ -1,6 +1,8 @@
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/DataDog/zstd v1.4.5 h1:EndNeuB0l9syBZhut0wns3gV1hL8zX8LIu6ZiVHWLIQ=
 github.com/DataDog/zstd v1.4.5/go.mod h1:1jcaCB/ufaK+sKp1NBhlGmpz41jOoPQ35bpF36t7BBo=
+github.com/DelphinusLab/zkwasm-minirollup-rpc-go v0.0.0-20250121063742-38f8f94e01e4 h1:xuOzIDPkSP8ZgAQQ+lc+Zy2ekxhIFweY/8Lf0mhT0U8=
+github.com/DelphinusLab/zkwasm-minirollup-rpc-go v0.0.0-20250121063742-38f8f94e01e4/go.mod h1:Syqupix4BdtVnkIGyvs9cHlWTWVoRUrSY+TLDWFHN5E=
 github.com/Masterminds/semver/v3 v3.1.1/go.mod h1:VPu/7SZ7ePZ3QOrcuXROw5FAcLl4a0cBrbBpGY/8hQs=
 github.com/Microsoft/go-winio v0.6.2 h1:F2VQgta7ecxGYO8k3ZZz3RS8fVIXVxONVUPlNERoyfY=
 github.com/Microsoft/go-winio v0.6.2/go.mod h1:yd8OoFMLzJbo9gZq8j5qaps8bJ9aShtEA8Ipt1oGCvU=

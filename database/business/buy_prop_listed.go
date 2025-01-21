@@ -21,6 +21,7 @@ type BuyPropListed struct {
 	RanchId         *big.Int       `gorm:"serializer:u256" json:"ranchId"`
 	ItemType        string         `json:"itemType"`
 	IsDeposit       int            `json:"isDeposit"`
+	TryTimes        int            `json:"tryTimes"`
 	ContractAddress common.Address `gorm:"serializer:bytes" json:"contractAddress"`
 	BlockNumber     *big.Int       `gorm:"serializer:u256" json:"blockNumber"`
 	TxHash          common.Hash    `gorm:"serializer:bytes" json:"txHash"`
@@ -40,11 +41,42 @@ func NewBuyPropListedDB(db *gorm.DB) BuyPropListedDB {
 
 type BuyPropListedView interface {
 	ListBuyPropListed(userAddress string, pageNum, pageSize int) ([]BuyPropListed, int64)
+	ListNeedDeposit() []BuyPropListed
 }
 
 type BuyPropListedDB interface {
 	BuyPropListedView
 	StoreBuyProp(BuyPropListed) error
+	UpdateBuyProp(buyProp BuyPropListed) error
+}
+
+func (db buyPropListedDB) ListNeedDeposit() []BuyPropListed {
+	var buyPropListed []BuyPropListed
+	this := db.gorm.Table(BuyPropListed{}.TableName())
+	this = this.Where("is_deposit = 0 and try_times < 3")
+	result := this.Order("timestamp asc").Limit(20).Find(&buyPropListed)
+	if result.Error != nil {
+		log.Error("ListNeedDeposit", "error", result.Error)
+	}
+	return buyPropListed
+}
+
+func (db buyPropListedDB) UpdateBuyProp(buyProp BuyPropListed) error {
+	if buyProp.TxHash.String() == "" {
+		return nil
+	}
+	var exits BuyPropListed
+	err := db.gorm.Table(buyProp.TableName()).Where(BuyPropListed{TxHash: buyProp.TxHash}).Take(&exits).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil
+		}
+	}
+	result := db.gorm.Table(buyProp.TableName()).Where(BuyPropListed{TxHash: buyProp.TxHash}).Updates(buyProp)
+	if result.Error != nil {
+		log.Error("UpdateBuyProp", "error", result.Error)
+	}
+	return nil
 }
 
 func (db buyPropListedDB) ListBuyPropListed(userAddress string, pageNum, pageSize int) ([]BuyPropListed, int64) {

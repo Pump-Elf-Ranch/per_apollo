@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/DelphinusLab/zkwasm-minirollup-rpc-go/zkwasm"
 	"github.com/Pump-Elf-Ranch/per_apollo/event/sepolia"
 	"github.com/Pump-Elf-Ranch/per_apollo/worker/clean_data_worker"
 	"github.com/Pump-Elf-Ranch/per_apollo/worker/deposit_prop_worker"
@@ -147,7 +148,8 @@ func (e *PerApollo) initCleanBlockWorker(cfg *config.Config) error {
 }
 
 func (e *PerApollo) initDepositWorker(cfg *config.Config) error {
-	depositPropWorker, err := deposit_prop_worker.NewWorkerProcessor(e.db, e.shutdown, cfg)
+	zkwamRpc := zkwasm.NewZKWasmAppRpc(cfg.ZkwasmRpcUrl)
+	depositPropWorker, err := deposit_prop_worker.NewWorkerProcessor(e.db, e.shutdown, cfg, zkwamRpc)
 	if err != nil {
 		return fmt.Errorf("failed to init  to depositPropWorker: %w", err)
 	}

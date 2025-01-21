@@ -18,7 +18,7 @@ require (
 )
 
 require (
-	github.com/DelphinusLab/zkwasm-minirollup-rpc-go v0.0.0-20250121063742-38f8f94e01e4 // indirect
+	github.com/DelphinusLab/zkwasm-minirollup-rpc-go v0.0.0-20250121151136-a0eb7855663e // indirect
 	github.com/Microsoft/go-winio v0.6.2 // indirect
 	github.com/StackExchange/wmi v1.2.1 // indirect
 	github.com/bits-and-blooms/bitset v1.13.0 // indirect

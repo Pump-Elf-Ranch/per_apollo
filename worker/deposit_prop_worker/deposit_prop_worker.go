@@ -2,6 +2,7 @@ package deposit_prop_worker
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"github.com/DelphinusLab/zkwasm-minirollup-rpc-go/zkwasm"
 	"github.com/Pump-Elf-Ranch/per_apollo/common/global_const"
@@ -23,6 +24,7 @@ type WorkerProcessor struct {
 }
 
 var DEPOSIT_CMD = big.NewInt(8)
+var INIT_CMD = big.NewInt(1)
 
 func NewWorkerProcessor(db *database.DB, shutdown context.CancelCauseFunc, cfg *config.Config,
 	zkwasmRpc *zkwasm.ZKWasmAppRpc) (*WorkerProcessor, error) {
@@ -40,10 +42,15 @@ func NewWorkerProcessor(db *database.DB, shutdown context.CancelCauseFunc, cfg *
 func (b *WorkerProcessor) WorkerStart() error {
 	tickerRun := time.NewTicker(time.Second * 5)
 	b.tasks.Go(func() error {
-
+		var adminExist = false
 		for range tickerRun.C {
 			log.Info("deposit")
-			b.DepositProp()
+			adminExist = b.AdminExist()
+			if adminExist {
+				b.DepositProp()
+			} else {
+				b.InitAdmin()
+			}
 		}
 		return nil
 	})
@@ -93,4 +100,42 @@ func (b *WorkerProcessor) DepositProp() {
 			log.Error("UpdateBuyProp", "error", err)
 		}
 	}
+}
+
+func (b *WorkerProcessor) InitAdmin() {
+	adminKey := b.cfg.AdminKey
+	initPlayerCmd := b.zkwasmRpc.CreateCommand(big.NewInt(0), INIT_CMD, big.NewInt(0))
+	cmd := [4]*big.Int{
+		initPlayerCmd,
+		big.NewInt(0),
+		big.NewInt(0),
+		big.NewInt(0),
+	}
+	resultInitPlayer, err := b.zkwasmRpc.SendTransaction(cmd, adminKey)
+	if err != nil {
+		log.Error("SendTransaction", "error", err)
+		return
+	}
+	log.Info("initPlayer", "resultInitPlayer", resultInitPlayer)
+}
+
+func (b *WorkerProcessor) AdminExist() bool {
+	state, getStateErr := b.zkwasmRpc.QueryState(b.cfg.AdminKey)
+	if getStateErr != nil {
+		log.Error("QueryState", "error", getStateErr)
+		return false
+	}
+	var data map[string]interface{}
+	err := json.Unmarshal([]byte(state["data"].(string)), &data)
+	if err != nil {
+		log.Error("Unmarshal", "error", err)
+		return false
+	} else {
+		player, ok := data["player"]
+		if ok {
+			log.Info("adminExist", "admin player", player)
+			return true
+		}
+	}
+	return false
 }

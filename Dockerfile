@@ -16,7 +16,7 @@ WORKDIR /app/per
 
 RUN make build
 
-FROM alpine:3.18
+FROM alpine:3.20
 
 COPY --from=builder /app/per/per_apollo /usr/local/bin
 COPY --from=builder /app/per/config-demo.yaml /app/per/apollo.yaml

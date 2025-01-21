@@ -1,4 +1,4 @@
-FROM  golang:1.22.3-alpine3.18 as builder
+FROM  golang:1.23.2-alpine3.18 as builder
 
 RUN apk add --no-cache make ca-certificates gcc musl-dev linux-headers git jq bash
 
@@ -9,7 +9,7 @@ WORKDIR /app
 
 RUN go mod download
 
-# build Nekoswap_runes with the shared go.mod & go.sum files
+# build per_apollo with the shared go.mod & go.sum files
 COPY . /app/per
 
 WORKDIR /app/per

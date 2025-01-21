@@ -12,8 +12,8 @@ server:
 rpcs:
   - rpc_url: '{{RPC_URL}}'
     chain_id: 11155111 # 测试网
-    start_block: 7345203
-    event_start_block: 7345203
+    start_block: 7532912
+    event_start_block: 7532912
     header_buffer_size: 200 # 区块缓冲大小
     contracts:
       - "0x8b76c4c4c5fc53cd7881c330c4223b095fd52508"
@@ -21,8 +21,8 @@ rpcs:
 
 admin_key: "{{ADMIN_KEY}}"
 
-zkwasm_rpc_url: "https://"
+zkwasm_rpc_url: "https://zk-server.pumpelf.ai"
 
 contract_infos:
   - chain_id: 11155111
-    token_base_address: "0x99d2f8e0d9267c22fbecedbc505f2c2f1bba3517"
+    token_base_address: "0x8B76C4c4c5Fc53cD7881C330C4223b095Fd52508"

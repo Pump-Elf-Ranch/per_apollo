@@ -34,6 +34,7 @@ jobs:
           echo $IMAGE_URL
           sed -i 's|{{PGSQL_PASSWORD}}|'"${{ secrets.PGSQL_PASSWORD }}"'|g' config-demo.yaml
           sed -i 's|{{RPC_URL}}|'"${{ secrets.RPC_URL }}"'|g' config-demo.yaml
+          sed -i 's|{{ADMIN_KEY}}|'"${{ secrets.SERVER_ADMIN_KEY }}"'|g' config-demo.yaml
           docker build -t ${IMAGE_URL} .
           docker push ${IMAGE_URL}
       - name: Update Deploy Version

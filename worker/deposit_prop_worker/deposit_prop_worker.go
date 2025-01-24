@@ -71,18 +71,11 @@ func (b *WorkerProcessor) DepositProp() {
 			}
 			continue
 		}
-		depositCmd := b.zkwasmRpc.CreateCommand(nonce, DEPOSIT_CMD, big.NewInt(0))
 		ranchId := buyProp.RanchId
 		propType := buyProp.ItemId
-		depositP := new(big.Int).Lsh(ranchId, 32)
-		depositP.Add(depositP, propType)
-		cmd := [4]*big.Int{
-			depositCmd,
-			buyProp.Pid1,
-			buyProp.Pid2,
-			depositP,
-		}
-		resultDeposit, err := b.zkwasmRpc.SendTransaction(cmd, adminKey)
+		depositCmd := b.zkwasmRpc.CreateCommand(nonce, DEPOSIT_CMD, []*big.Int{buyProp.Pid1, buyProp.Pid2, ranchId, propType})
+
+		resultDeposit, err := b.zkwasmRpc.SendTransaction(depositCmd, adminKey)
 		if err != nil {
 			log.Error("SendTransaction", "error", err)
 			buyProp.TryTimes++
@@ -104,14 +97,8 @@ func (b *WorkerProcessor) DepositProp() {
 
 func (b *WorkerProcessor) InitAdmin() {
 	adminKey := b.cfg.AdminKey
-	initPlayerCmd := b.zkwasmRpc.CreateCommand(big.NewInt(0), INIT_CMD, big.NewInt(0))
-	cmd := [4]*big.Int{
-		initPlayerCmd,
-		big.NewInt(0),
-		big.NewInt(0),
-		big.NewInt(0),
-	}
-	resultInitPlayer, err := b.zkwasmRpc.SendTransaction(cmd, adminKey)
+	initPlayerCmd := b.zkwasmRpc.CreateCommand(big.NewInt(0), INIT_CMD, []*big.Int{})
+	resultInitPlayer, err := b.zkwasmRpc.SendTransaction(initPlayerCmd, adminKey)
 	if err != nil {
 		log.Error("SendTransaction", "error", err)
 		return

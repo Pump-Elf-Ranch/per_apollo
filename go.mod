@@ -3,7 +3,7 @@ module github.com/Pump-Elf-Ranch/per_apollo
 go 1.23.2
 
 require (
-	github.com/DelphinusLab/zkwasm-minirollup-rpc-go v0.0.0-20250125102916-a9826023e354
+	github.com/DelphinusLab/zkwasm-minirollup-rpc-go v0.0.0-20250125133531-aa0bf08535c9
 	github.com/ethereum/go-ethereum v1.14.12
 	github.com/gin-contrib/cors v1.7.2
 	github.com/gin-gonic/gin v1.9.1

@@ -4,10 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/DelphinusLab/zkwasm-minirollup-rpc-go/zkwasm"
-	"github.com/Pump-Elf-Ranch/per_apollo/event/sepolia"
-	"github.com/Pump-Elf-Ranch/per_apollo/worker/clean_data_worker"
-	"github.com/Pump-Elf-Ranch/per_apollo/worker/deposit_prop_worker"
 	"math/big"
 	"sync/atomic"
 	"time"
@@ -15,15 +11,19 @@ import (
 	"github.com/ethereum/go-ethereum/log"
 	"github.com/gin-gonic/gin"
 
+	"github.com/DelphinusLab/zkwasm-minirollup-rpc-go/zkwasm"
 	business_api "github.com/Pump-Elf-Ranch/per_apollo/api/business"
 	"github.com/Pump-Elf-Ranch/per_apollo/common/errors_h"
 	"github.com/Pump-Elf-Ranch/per_apollo/common/global_const"
 	"github.com/Pump-Elf-Ranch/per_apollo/common/middleware"
 	"github.com/Pump-Elf-Ranch/per_apollo/config"
 	"github.com/Pump-Elf-Ranch/per_apollo/database"
+	"github.com/Pump-Elf-Ranch/per_apollo/event/sepolia"
 	"github.com/Pump-Elf-Ranch/per_apollo/service"
 	"github.com/Pump-Elf-Ranch/per_apollo/synchronizer"
 	"github.com/Pump-Elf-Ranch/per_apollo/synchronizer/node"
+	"github.com/Pump-Elf-Ranch/per_apollo/worker/clean_data_worker"
+	"github.com/Pump-Elf-Ranch/per_apollo/worker/deposit_prop_worker"
 )
 
 type PerApollo struct {
